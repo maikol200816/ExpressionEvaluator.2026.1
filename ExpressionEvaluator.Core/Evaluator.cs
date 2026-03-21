@@ -1,5 +1,4 @@
 ﻿namespace ExpressionEvaluator.Core;
-
 public class Evaluator
 {
     public static double Evaluate(string infix)
@@ -12,49 +11,57 @@ public class Evaluator
     {
         var postFix = string.Empty;
         var stack = new Stack<char>();
-        
+        string accumulator = "";
+
         foreach (var item in infix)
         {
             if (IsOperator(item))
             {
-                if (stack.Count == 0)
+                if (accumulator != "")
+                {
+                    postFix += accumulator + " ";
+                    accumulator = "";
+                }
+
+                if (item == '(')
                 {
                     stack.Push(item);
                 }
+                else if (item == ')')
+                {
+                    while (stack.Count > 0 && stack.Peek() != '(')
+                    {
+                        postFix += stack.Pop() + " ";
+                    }
+                    stack.Pop();
+                }
                 else
                 {
-                    if (item == ')')
+
+                    while (stack.Count > 0 && stack.Peek() != '(' && PriorityStack(stack.Peek()) >= PriorityInfix(item))
                     {
-                        do
-                        {
-                            postFix += stack.Pop();
-                        } while (stack.Peek() != '(');
-                        stack.Pop();
+                        postFix += stack.Pop() + " ";
                     }
-                    else
-                    {
-                        if (PriorityInfix(item) > PriorityStack(stack.Peek()))
-                        {
-                            stack.Push(item);
-                        }
-                        else
-                        {
-                            postFix += stack.Pop()+"";
-                            stack.Push(item);
-                        }
-                    }
+                    stack.Push(item);
                 }
             }
-            else
+            else if (item != ' ')
             {
-                postFix += item;
+                accumulator += item;
             }
         }
+
+        if (accumulator != "")
+        {
+            postFix += accumulator + " ";
+        }
+
         while (stack.Count > 0)
         {
-            postFix += stack.Pop();
+            postFix += stack.Pop() + " ";
         }
-        return postFix;
+
+        return postFix.Trim();
     }
 
     private static int PriorityStack(char item) => item switch
@@ -79,28 +86,34 @@ public class Evaluator
         _ => throw new Exception("Sintax error."),
     };
 
+
     private static double EvaluatePostfix(string postfix)
     {
         var stack = new Stack<double>();
-        foreach (char item in postfix)
+
+
+        var tokens = postfix.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var token in tokens)
         {
-            if (IsOperator(item))
+
+            if (token.Length == 1 && IsOperator(token[0]))
             {
                 var b = stack.Pop();
                 var a = stack.Pop();
-                stack.Push(item switch
+                stack.Push(token[0] switch
                 {
                     '+' => a + b,
                     '-' => a - b,
                     '*' => a * b,
                     '/' => a / b,
                     '^' => Math.Pow(a, b),
-                    _ => throw new Exception("Sintax error."),
+                    _ => throw new Exception("Sintax error.")
                 });
             }
             else
             {
-                stack.Push(double.Parse(item.ToString()));
+                stack.Push(double.Parse(token, System.Globalization.CultureInfo.InvariantCulture));
             }
         }
         return stack.Pop();
