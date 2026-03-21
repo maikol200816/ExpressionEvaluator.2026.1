@@ -12,6 +12,7 @@ public class Evaluator
     {
         var postFix = string.Empty;
         var stack = new Stack<char>();
+        
         foreach (var item in infix)
         {
             if (IsOperator(item))
@@ -38,7 +39,7 @@ public class Evaluator
                         }
                         else
                         {
-                            postFix += stack.Pop();
+                            postFix += stack.Pop()+"";
                             stack.Push(item);
                         }
                     }

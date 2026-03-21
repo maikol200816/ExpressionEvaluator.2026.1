@@ -60,7 +60,7 @@
             txtDisplay.ForeColor = Color.White;
             txtDisplay.Location = new Point(5, 12);
             txtDisplay.Name = "txtDisplay";
-            txtDisplay.Size = new Size(625, 39);
+            txtDisplay.Size = new Size(627, 39);
             txtDisplay.TabIndex = 0;
             // 
             // btn7
@@ -310,7 +310,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Black;
-            ClientSize = new Size(632, 374);
+            ClientSize = new Size(634, 373);
             Controls.Add(button21);
             Controls.Add(button20);
             Controls.Add(button19);
